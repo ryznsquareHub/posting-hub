@@ -1,0 +1,7 @@
+supabase/
+scripts/
+docs/
+.claude/
+.design-package*/
+.local/
+.vercel/
