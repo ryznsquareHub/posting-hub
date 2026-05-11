@@ -57,3 +57,5 @@ tsconfig.tsbuildinfo
 # tmp
 tmp/
 *.tmp
+
+.vercel
