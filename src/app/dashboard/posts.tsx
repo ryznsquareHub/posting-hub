@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { FiltersBar } from "@/features/posts/FiltersBar";
 import { PostsList } from "@/features/posts/PostsList";
 import { PreviewPanel } from "@/features/posts/PreviewPanel";
+import { usePosts } from "@/features/posts/usePosts";
+import { PostsListSkeleton } from "@/components/ui/Skeleton";
 import type { PostStatus } from "@/types/post";
 import { usePostsShell } from "./posts-shell";
 
@@ -64,6 +66,9 @@ export default function PostsPage() {
     setSelection(new Set());
   };
 
+  const { isLoading } = usePosts();
+  const showSkeleton = isLoading && posts.length === 0;
+
   return (
     <div className="posts layout-split">
       <div className="posts-l">
@@ -78,20 +83,24 @@ export default function PostsPage() {
           campaigns={campaigns}
           searchInputRef={searchInputRef}
         />
-        <PostsList
-          posts={filtered}
-          campaigns={campaigns}
-          focusId={focusId}
-          selection={selection}
-          density="compact"
-          copyMode="panel"
-          onFocus={setFocusId}
-          onToggleSelect={toggleSelect}
-          onSelectAll={() => setSelection(new Set(filtered.map((p) => p.id)))}
-          onClearAll={() => setSelection(new Set())}
-          onCopy={(p) => doCopy(p)}
-          onResetFilter={resetFilter}
-        />
+        {showSkeleton ? (
+          <PostsListSkeleton />
+        ) : (
+          <PostsList
+            posts={filtered}
+            campaigns={campaigns}
+            focusId={focusId}
+            selection={selection}
+            density="compact"
+            copyMode="panel"
+            onFocus={setFocusId}
+            onToggleSelect={toggleSelect}
+            onSelectAll={() => setSelection(new Set(filtered.map((p) => p.id)))}
+            onClearAll={() => setSelection(new Set())}
+            onCopy={(p) => doCopy(p)}
+            onResetFilter={resetFilter}
+          />
+        )}
       </div>
       <div className="posts-r">
         <PreviewPanel

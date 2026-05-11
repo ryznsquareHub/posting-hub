@@ -1,5 +1,8 @@
+import { toast } from "sonner";
+
 import { I } from "@/components/icons";
 import { STATUSES, KINDS } from "@/data/seed";
+import { useDeletePost } from "./usePosts";
 import type { Campaign } from "@/types/campaign";
 import type { Post } from "@/types/post";
 
@@ -56,6 +59,16 @@ export function PostRow({
 }: PostRowProps) {
   const m = statusMeta(post.status);
   const km = kindMeta(post.kind);
+  const del = useDeletePost();
+
+  const onDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm(`'${post.title.slice(0, 30)}…' 삭제하시겠습니까?`)) return;
+    del.mutate(post.id, {
+      onSuccess: () => toast.success("삭제됨"),
+      onError: (err) => toast.error((err as Error).message ?? "삭제 실패"),
+    });
+  };
   const justCopied = Boolean(post._justCopied);
 
   return (
@@ -163,8 +176,8 @@ export function PostRow({
             )}
           </button>
         )}
-        <button className="btn-icon" title="더보기">
-          <I.More size={13} />
+        <button className="btn-icon" title="삭제" onClick={onDelete}>
+          <I.Trash size={12} />
         </button>
       </div>
     </div>

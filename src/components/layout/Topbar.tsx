@@ -1,4 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { I } from "@/components/icons";
 import { campaignById } from "@/data/seed";
@@ -22,6 +24,7 @@ export function Topbar({ kbdHint, onCmdK }: TopbarProps) {
   const location = useLocation();
   const params = useParams();
   const nav = useNavigate();
+  const qc = useQueryClient();
 
   const breadcrumb = (() => {
     if (location.pathname.startsWith("/dashboard/campaign/") && params.id) {
@@ -30,6 +33,11 @@ export function Topbar({ kbdHint, onCmdK }: TopbarProps) {
     }
     return LABELS[location.pathname] ?? "Dashboard";
   })();
+
+  const onRefresh = () => {
+    qc.invalidateQueries();
+    toast("새로고침");
+  };
 
   return (
     <header className="topbar">
@@ -46,7 +54,7 @@ export function Topbar({ kbdHint, onCmdK }: TopbarProps) {
           <span>Search…</span>
           <span className="kbd">⌘K</span>
         </button>
-        <button className="btn-ghost" title="Refresh">
+        <button className="btn-ghost" title="Refresh" onClick={onRefresh}>
           <I.Refresh size={13} />
         </button>
         <div className="top-divider" />

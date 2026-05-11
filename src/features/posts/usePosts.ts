@@ -5,6 +5,7 @@ import {
   listPosts,
   updatePostStatus,
   incrementCopyCount,
+  deletePost,
   type PostsFilterInput,
 } from "@/lib/api/posts";
 import { POSTS_SEED } from "@/data/seed";
@@ -48,6 +49,20 @@ export function useCopyPost() {
         return Promise.resolve({ id });
       }
       return incrementCopyCount(id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+}
+
+export function useDeletePost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!isSupabaseConfigured) return { id };
+      await deletePost(id);
+      return { id };
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["posts"] });
