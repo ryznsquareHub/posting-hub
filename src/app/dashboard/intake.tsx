@@ -16,6 +16,7 @@ import {
   SAMPLE_IMPORT,
   type ParsedBlock,
 } from "@/features/intake/parseClaudeOutput";
+import { CampaignRelinkPopover } from "@/features/intake/CampaignRelinkPopover";
 
 import { usePostsShell } from "./posts-shell";
 
@@ -202,7 +203,6 @@ export default function IntakePage() {
               <div>Queue</div>
             </div>
             {feed.map((f) => {
-              const c = campaigns.find((x) => x.id === f.campaignId);
               return (
                 <div className={"intake-feed-row " + f.parseStatus} key={f.id}>
                   <div className="mono mute">
@@ -215,15 +215,12 @@ export default function IntakePage() {
                   </div>
                   <div className="mono mute ellip">{f.promptName}</div>
                   <div className="ellip">{f.title}</div>
-                  <div className="ellip">
-                    {c && (
-                      <span
-                        className="cmp-color"
-                        style={{ background: c.color }}
-                      />
-                    )}
-                    {f.campaignMatched ?? "—"}
-                  </div>
+                  <CampaignRelinkPopover
+                    eventId={f.id}
+                    currentCampaignId={f.campaignId ?? null}
+                    currentLabel={f.campaignMatched ?? null}
+                    campaigns={campaigns}
+                  />
                   <div>
                     <span className={"parse-tag " + f.parseStatus}>
                       {f.parseStatus === "ok"

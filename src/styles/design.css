@@ -1244,6 +1244,47 @@ pre { font-family: "Geist Mono", ui-monospace, monospace; }
 .intake-feed-row .ellip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .intake-warn-x { font-size: 10px; color: var(--text-dim); margin-left: 4px; }
 
+/* Intake campaign relink popover */
+.intake-relink { position: relative; min-width: 0; }
+.intake-relink-trigger {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  padding: 4px 6px; margin: -4px -6px;
+  background: transparent; border: 1px solid transparent; border-radius: 4px;
+  color: inherit; font: inherit; cursor: pointer; text-align: left;
+}
+.intake-relink-trigger:hover { background: var(--bg-2); border-color: var(--border); }
+.intake-relink-trigger:disabled { opacity: 0.6; cursor: progress; }
+.intake-relink-trigger.unmatched { color: var(--text-dim); font-style: italic; }
+.intake-relink-trigger.unmatched:hover { color: var(--text); }
+.intake-relink-label { flex: 1 1 auto; min-width: 0; }
+.intake-relink-trigger > svg:last-child { color: var(--text-dim); flex-shrink: 0; }
+
+.intake-relink-pop {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 30;
+  width: 240px; max-height: 320px;
+  background: var(--bg-1); border: 1px solid var(--border);
+  border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.intake-relink-search {
+  padding: 8px 10px; margin: 0;
+  background: var(--bg); border: 0; border-bottom: 1px solid var(--border);
+  color: var(--text); font-size: 11.5px; outline: none;
+}
+.intake-relink-list { flex: 1 1 auto; overflow-y: auto; padding: 4px; }
+.intake-relink-row {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 6px 8px; background: transparent; border: 0; border-radius: 4px;
+  color: var(--text); font: inherit; font-size: 11.5px; text-align: left;
+  cursor: pointer;
+}
+.intake-relink-row:hover { background: var(--bg-2); }
+.intake-relink-row.current { color: var(--accent, #6e7af0); }
+.intake-relink-row.unlink { color: var(--text-dim); border-bottom: 1px dashed var(--border); border-radius: 0; margin-bottom: 4px; padding-bottom: 8px; }
+.intake-relink-row.unlink:hover { color: #ff6e6e; background: rgba(255,110,110,0.06); }
+.intake-relink-check { margin-left: auto; flex-shrink: 0; }
+.intake-relink-empty { padding: 12px; text-align: center; font-size: 11px; color: var(--text-dim); }
+
 .intake-fallback-note {
   display: flex; align-items: center; gap: 8px;
   padding: 9px 13px; margin-bottom: 12px;
