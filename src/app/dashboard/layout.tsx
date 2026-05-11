@@ -15,6 +15,7 @@ import { STATUS_BY_HOTKEY, statusMeta } from "@/features/posts/status-meta";
 import { useCampaigns } from "@/features/campaigns/useCampaigns";
 import { usePosts, useUpdatePostStatus, useCopyPost } from "@/features/posts/usePosts";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { useRealtime } from "@/lib/supabase/useRealtime";
 import type { Post, PostStatus } from "@/types/post";
 import type { Campaign } from "@/types/campaign";
 
@@ -35,6 +36,7 @@ export default function DashboardLayout() {
   const { data: cloudPosts } = usePosts();
   const updateStatusMut = useUpdatePostStatus();
   const copyMut = useCopyPost();
+  useRealtime();
 
   // ── State (lifted; cloud 데이터 도착 시 자동 동기화) ──────────────────
   const [posts, setPosts] = useState<Post[]>(POSTS_SEED);
