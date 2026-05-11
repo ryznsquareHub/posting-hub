@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import { I } from "@/components/icons";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useAutomation } from "@/features/intake/useAutomation";
+import { NewCampaignModal } from "@/features/campaigns/NewCampaignModal";
 import type { Campaign } from "@/types/campaign";
 import type { Post } from "@/types/post";
 
@@ -42,6 +44,7 @@ export function Sidebar({
   const params = useParams<{ id?: string }>();
   const { user } = useAuth();
   const auto = useAutomation();
+  const [newCampaignOpen, setNewCampaignOpen] = useState(false);
 
   // Campaign post counts
   const cCounts: Record<string, number> = {};
@@ -166,7 +169,13 @@ export function Sidebar({
       <div className="side-section campaigns-section">
         <div className="side-section-h">
           <span>Campaigns</span>
-          <button className="side-section-add" title="새 캠페인">＋</button>
+          <button
+            className="side-section-add"
+            title="새 캠페인 (Cmd+Shift+N)"
+            onClick={() => setNewCampaignOpen(true)}
+          >
+            ＋
+          </button>
         </div>
         <div className="campaign-list">
           {campaigns.map((c) => (
@@ -199,6 +208,11 @@ export function Sidebar({
           </div>
         </div>
       </div>
+      <NewCampaignModal
+        open={newCampaignOpen}
+        onClose={() => setNewCampaignOpen(false)}
+        onCreated={(id) => nav(`/dashboard/campaign/${id}`)}
+      />
     </aside>
   );
 }

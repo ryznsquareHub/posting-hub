@@ -1,10 +1,13 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { I } from "@/components/icons";
 import { useIntakeFeed, useHookEndpoints } from "@/features/intake/useIntake";
 import { useImports } from "@/features/intake/useImports";
 import { useAutomation } from "@/features/intake/useAutomation";
+import { useManualPaste } from "@/features/intake/useManualPaste";
 import { usePrompts } from "@/features/prompts/usePrompts";
 import { LiveDot, PlatTag, kindMeta, timeAgo } from "@/lib/format/meta";
 import {
@@ -25,10 +28,12 @@ export default function IntakePage() {
   const taRef = useRef<HTMLTextAreaElement | null>(null);
 
   const auto = useAutomation();
-  const { data: feed = [] } = useIntakeFeed(100);
+  const qc = useQueryClient();
+  const { data: feed = [], isLoading: feedLoading } = useIntakeFeed(100);
   const { data: hooks = [] } = useHookEndpoints();
   const { data: prompts = [] } = usePrompts();
   const { data: imports = [] } = useImports();
+  const manualPaste = useManualPaste();
 
   const onPaste: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     const v = e.target.value;
@@ -48,12 +53,18 @@ export default function IntakePage() {
   );
   const errorCount = parsed.length - okCount;
 
-  const doImport = () => {
+  const doImport = async () => {
     if (!okCount) return;
-    // mock 모드: 실제 import 는 Phase 3 에서 supabase ingestManualPaste 호출
-    setRaw("");
-    setParsed([]);
-    toast.success(`${okCount}건 Queue 등록`);
+    try {
+      const { ingested, posts } = await manualPaste.mutateAsync(parsed);
+      setRaw("");
+      setParsed([]);
+      toast.success(
+        `${ingested}건 Queue 등록${posts > 0 ? ` · ${posts}건 자동 발행대기 등록` : ""}`,
+      );
+    } catch (e) {
+      toast.error((e as Error).message ?? "Import 실패");
+    }
   };
 
   const intake24h = feed.length;
@@ -166,7 +177,15 @@ export default function IntakePage() {
             <span className="mute">
               실시간 수신 · Hook과 Manual paste가 같은 큐로 흘러들어옵니다
             </span>
-            <button className="btn-ghost xs">
+            <button
+              className="btn-ghost xs"
+              onClick={() => {
+                qc.invalidateQueries({ queryKey: ["intake"] });
+                qc.invalidateQueries({ queryKey: ["imports"] });
+                toast("새로고침");
+              }}
+              disabled={feedLoading}
+            >
               <I.Refresh size={11} /> 새로고침
             </button>
           </div>
