@@ -35,12 +35,16 @@ export const SHORTCUTS: ShortcutMeta[] = [
   { keys: ["⌥","C"],   desc: "CTA 만 복사",              scope: "posts",  group: "copy" },
   { keys: ["B"],       desc: "Burst 모드 토글 (C 연속)", scope: "posts",  group: "copy" },
 
-  // status
+  // status (focused row)
   { keys: ["1"],       desc: "초안",                    scope: "posts",  group: "status" },
   { keys: ["2"],       desc: "발행대기",                scope: "posts",  group: "status" },
   { keys: ["3"],       desc: "예약",                    scope: "posts",  group: "status" },
   { keys: ["4"],       desc: "발행완료",                scope: "posts",  group: "status" },
   { keys: ["5"],       desc: "보관",                    scope: "posts",  group: "status" },
+
+  // 위치 기반 빠른 복사 (테이블 맨 위에서 1~9 번째 row)
+  { keys: ["⇧","1"],   desc: "#1 row 제목 복사 (⇧2~9 도 동일 패턴)", scope: "posts", group: "copy" },
+  { keys: ["⌥","1"],   desc: "#1 row 본문 복사 + 발행완료 자동 (⌥2~9 도)", scope: "posts", group: "copy" },
   { keys: ["P"],       desc: "발행완료 (=4)",           scope: "posts",  group: "status" },
   { keys: ["S"],       desc: "예약 (=3)",               scope: "posts",  group: "status" },
   { keys: ["X"],       desc: "선택 토글",               scope: "posts",  group: "edit" },

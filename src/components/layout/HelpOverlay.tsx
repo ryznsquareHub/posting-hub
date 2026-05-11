@@ -34,15 +34,17 @@ const GROUPS: HelpGroup[] = [
     title: "Copy",
     rows: [
       ["C", "본문 복사 (+ 상태 자동 전이)"],
-      ["⇧ C", "제목만 복사"],
-      ["⌥ C", "CTA만 복사"],
+      ["⇧ C", "제목만 복사 (focused row)"],
+      ["⌥ C", "CTA만 복사 (focused row)"],
+      ["⇧ 1~9", "#1~#9 row 제목 복사 (테이블 맨 위부터)"],
+      ["⌥ 1~9", "#1~#9 row 본문 복사 + 발행완료 자동 전이"],
       ["B", "Burst 모드 토글 (자동 다음 행)"],
     ],
   },
   {
     title: "Status & Edit",
     rows: [
-      ["1 / 2 / 3 / 4 / 5", "Draft / Ready / Scheduled / Published / Archived"],
+      ["1 ~ 5", "focused row 의 상태: Draft / Ready / Scheduled / Published / Archived"],
       ["P", "발행완료로 표시"],
       ["S", "예약발행으로 표시"],
       ["D", "현재 행 복제"],

@@ -324,11 +324,34 @@ export default function DashboardLayout() {
         }
         return;
       }
-      if (focused && /^[1-5]$/.test(e.key)) {
-        e.preventDefault();
-        const s = STATUS_BY_HOTKEY[e.key];
-        if (s) setStatus(focused.id, s);
-        return;
+      // Shift+1~9 = row #N 제목 복사, Alt+1~9 = row #N 본문 복사 (+ status 자동 전이)
+      const digitMatch = e.code.match(/^Digit([1-9])$/);
+      if (digitMatch) {
+        const n = parseInt(digitMatch[1], 10);
+        const target = filtered[n - 1];
+        if (e.shiftKey && !e.metaKey && !e.ctrlKey && target) {
+          e.preventDefault();
+          copyText(target.title, `#${n} 제목 복사됨`);
+          return;
+        }
+        if (e.altKey && target) {
+          e.preventDefault();
+          setFocusId(target.id);
+          requestAnimationFrame(() => {
+            document
+              .querySelector(`[data-row-id="${target.id}"]`)
+              ?.scrollIntoView({ block: "nearest" });
+          });
+          doCopy(target);
+          return;
+        }
+        // modifier 없으면 기존 1~5 status hotkey
+        if (!e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey && focused && n <= 5) {
+          e.preventDefault();
+          const s = STATUS_BY_HOTKEY[String(n)];
+          if (s) setStatus(focused.id, s);
+          return;
+        }
       }
       if (e.key === "d" && focused) {
         e.preventDefault();
