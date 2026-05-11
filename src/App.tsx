@@ -1,7 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import { RequireAuth } from "./lib/auth/RequireAuth";
-
 import DashboardLayout from "./app/dashboard/layout";
 import TodayPage from "./app/dashboard/today";
 import PostsPage from "./app/dashboard/posts";
@@ -11,21 +9,18 @@ import PromptLibraryPage from "./app/dashboard/prompt-library";
 import IntakePage from "./app/dashboard/intake";
 import HistoryPage from "./app/dashboard/history";
 import SettingsPage from "./app/dashboard/settings";
-import LoginPage from "./app/login";
 import AuthCallbackPage from "./app/auth-callback";
 import NotFoundPage from "./app/not-found";
 
 export const router = createBrowserRouter([
+  // D-009: Single-user 모드 — RequireAuth 제거. RLS 의 select 정책이 anon 도 허용.
+  // /login 직접 진입은 dashboard 로 자동 redirect (팀 모드 복귀 시 보존).
   { path: "/", element: <Navigate to="/dashboard" replace /> },
-  { path: "/login", element: <LoginPage /> },
+  { path: "/login", element: <Navigate to="/dashboard" replace /> },
   { path: "/auth-callback", element: <AuthCallbackPage /> },
   {
     path: "/dashboard",
-    element: (
-      <RequireAuth>
-        <DashboardLayout />
-      </RequireAuth>
-    ),
+    element: <DashboardLayout />,
     children: [
       { index: true, element: <TodayPage /> },
       { path: "posts", element: <PostsPage /> },

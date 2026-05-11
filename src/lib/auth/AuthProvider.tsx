@@ -44,26 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // D-008: single-user 자동 sign-in
-      if (autoEnabled) {
-        const { data: signIn, error } = await sb.auth.signInWithPassword({
-          email: autoEmail!,
-          password: autoPass!,
-        });
-        if (!mounted) return;
-        if (error) {
-          console.error("[AuthProvider] auto sign-in failed:", error.message);
-          setLoading(false);
-          return;
-        }
-        setSession(signIn.session);
-        setUser(signIn.user);
-        setLoading(false);
-        return;
-      }
-
-      // 매직링크 흐름 (팀 모드 / 비번 미설정)
+      // D-009: 자동 sign-in 은 background — UI 차단 X. RLS select 가 anon 도 허용.
       setLoading(false);
+      if (autoEnabled) {
+        sb.auth
+          .signInWithPassword({ email: autoEmail!, password: autoPass! })
+          .then(({ data: signIn, error }) => {
+            if (!mounted) return;
+            if (error) {
+              console.warn("[AuthProvider] auto sign-in failed:", error.message);
+              return;
+            }
+            setSession(signIn.session);
+            setUser(signIn.user);
+          });
+      }
     })();
 
     const { data: sub } = sb.auth.onAuthStateChange((_event, s) => {

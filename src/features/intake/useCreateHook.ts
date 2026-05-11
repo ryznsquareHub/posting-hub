@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { createHook } from "@/lib/api/hooks";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { resolveOwnerId } from "@/lib/auth/ownerId";
 import type { HookEndpoint } from "@/types/intake";
 
 export function useCreateHook() {
@@ -27,8 +28,9 @@ export function useCreateHook() {
           boundPrompts: args.boundPrompts ?? [],
         };
       }
-      if (!user?.id) throw new Error("로그인 필요");
-      return createHook({ name: args.name, ownerId: user.id, boundPrompts: args.boundPrompts });
+      const ownerId = resolveOwnerId(user?.id);
+      if (!ownerId) throw new Error("owner_id 결정 불가");
+      return createHook({ name: args.name, ownerId, boundPrompts: args.boundPrompts });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["hooks"] });

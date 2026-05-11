@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { createCampaign, type CampaignInput } from "@/lib/api/campaigns";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { resolveOwnerId } from "@/lib/auth/ownerId";
 import type { Campaign } from "@/types/campaign";
 
 export function useCreateCampaign() {
@@ -32,8 +33,9 @@ export function useCreateCampaign() {
           variants: [],
         };
       }
-      if (!user?.id) throw new Error("로그인 필요");
-      return createCampaign(input, user.id);
+      const ownerId = resolveOwnerId(user?.id);
+      if (!ownerId) throw new Error("owner_id 결정 불가 (env VITE_PUBLIC_OWNER_ID 필요)");
+      return createCampaign(input, ownerId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["campaigns"] });

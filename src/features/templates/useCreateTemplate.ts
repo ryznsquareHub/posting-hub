@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { resolveOwnerId } from "@/lib/auth/ownerId";
 import type { PostTemplate } from "@/types/prompt";
 
 export interface NewTemplateInput {
@@ -23,13 +24,14 @@ export function useCreateTemplate() {
           updatedAt: new Date().toISOString().slice(0, 10),
         };
       }
-      if (!user?.id) throw new Error("로그인 필요");
+      const ownerId = resolveOwnerId(user?.id);
+      if (!ownerId) throw new Error("owner_id 결정 불가");
       const id = "t_" + Math.random().toString(36).slice(2, 8);
       const { data, error } = await supabase()
         .from("templates")
         .insert({
           id,
-          owner_id: user.id,
+          owner_id: ownerId,
           name: input.name,
           platform: input.platform,
           uses: 0,

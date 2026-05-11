@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { ingestManualPaste } from "@/lib/api/intake";
 import { createPost } from "@/lib/api/posts";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { resolveOwnerId } from "@/lib/auth/ownerId";
 import type { ParsedBlock } from "./parseClaudeOutput";
 
 /**
@@ -19,13 +20,14 @@ export function useManualPaste() {
       if (!isSupabaseConfigured) {
         return { ingested: 0, posts: 0 } as const;
       }
-      if (!user?.id) throw new Error("로그인 필요");
+      const ownerId = resolveOwnerId(user?.id);
+      if (!ownerId) throw new Error("owner_id 결정 불가");
       const ok = parsed.filter((p) => p.ok);
       let ingested = 0;
       let posts = 0;
       for (const p of ok) {
         await ingestManualPaste({
-          ownerId: user.id,
+          ownerId,
           raw: serializeBlock(p),
           title: p.title,
           campaignId: p.campaignId ?? undefined,
@@ -52,7 +54,7 @@ export function useManualPaste() {
               copyCount: 0,
               recyclable: false,
             },
-            user.id,
+            ownerId,
           );
           posts++;
         }
