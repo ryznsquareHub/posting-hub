@@ -13,11 +13,23 @@
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+// Vercel Dashboard 에서 사용자가 큰따옴표 포함해 저장한 경우를 방어
+function envClean(v: string | undefined): string {
+  if (!v) return "";
+  let s = v.trim();
+  if (s.length >= 2 && ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'")))) {
+    s = s.slice(1, -1);
+  }
+  return s;
+}
+
 const HOOK_URL =
-  process.env.POSTING_HUB_URL ??
+  envClean(process.env.POSTING_HUB_URL) ||
   "https://ovdefrvxjblkiewempug.supabase.co/functions/v1/hook-intake";
-const SECRET = process.env.POSTING_HUB_SECRET ?? process.env.HOOK_SHARED_SECRET ?? "";
-const OWNER_ID = process.env.POSTING_HUB_OWNER_ID ?? "";
+const SECRET =
+  envClean(process.env.POSTING_HUB_SECRET) ||
+  envClean(process.env.HOOK_SHARED_SECRET);
+const OWNER_ID = envClean(process.env.POSTING_HUB_OWNER_ID);
 
 const SCHEMA_HINT = `반드시 아래 구조화 형식으로 출력하세요. 다른 설명/대화 줄 절대 추가 X.
 
