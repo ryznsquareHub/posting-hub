@@ -3,8 +3,9 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { I } from "@/components/icons";
-import { useIntakeFeed } from "@/features/intake/useIntake";
+import { useIntakeFeed, useHookEndpoints } from "@/features/intake/useIntake";
 import { useCampaign } from "@/features/campaigns/useCampaigns";
+import { useUpdateCampaign } from "@/features/campaigns/useUpdateCampaign";
 import {
   LiveDot,
   PlatTag,
@@ -23,6 +24,7 @@ export default function CampaignDetailPage() {
 
   const { posts, doCopy, copyText } = usePostsShell();
   const { data: feedAll = [] } = useIntakeFeed(100);
+  const { data: hooksList = [] } = useHookEndpoints();
   const nav = useNavigate();
 
   const variants = campaign?.variants ?? [];
@@ -266,7 +268,15 @@ export default function CampaignDetailPage() {
               </button>
               <button
                 className="btn-ghost xs"
-                onClick={() => copyText("(Hook URL — Phase 2)", "Hook URL 복사")}
+                onClick={() => {
+                  const hook = hooksList.find((h) => h.status === "live") ?? hooksList[0];
+                  if (!hook) {
+                    toast.error("발급된 Hook 이 없습니다 — Intake 페이지에서 발급");
+                    return;
+                  }
+                  copyText(hook.url, "Hook URL 복사됨");
+                }}
+                title={hooksList[0]?.url}
               >
                 <I.Link size={11} /> Hook URL
               </button>
@@ -413,6 +423,7 @@ function CampaignSettingsEditor({
   campaign,
 }: {
   campaign: {
+    id: string;
     settings?: {
       brand?: string;
       cta?: string;
@@ -425,42 +436,102 @@ function CampaignSettingsEditor({
   };
 }) {
   const s = campaign.settings ?? {};
+  const update = useUpdateCampaign();
+  const [brand, setBrand] = useState(s.brand ?? "");
+  const [region, setRegion] = useState(campaign.region);
+  const [industry, setIndustry] = useState(campaign.industry);
+  const [cta, setCta] = useState(s.cta ?? "");
+  const [tone, setTone] = useState(s.tone ?? "");
+  const [audience, setAudience] = useState(s.audience ?? "");
+  const [kws, setKws] = useState<string[]>(s.keywords ?? []);
+  const [kwDraft, setKwDraft] = useState("");
+
+  const addKw = () => {
+    const t = kwDraft.trim();
+    if (!t || kws.includes(t)) return;
+    setKws([...kws, t]);
+    setKwDraft("");
+  };
+
+  const onSave = async () => {
+    try {
+      await update.mutateAsync({
+        id: campaign.id,
+        brand,
+        region,
+        industry,
+        cta,
+        tone,
+        audience,
+        keywords: kws,
+      });
+      toast.success("저장됨");
+    } catch (e) {
+      toast.error((e as Error).message ?? "저장 실패");
+    }
+  };
+
   return (
     <div className="cd-settings-edit">
       <div className="cd-set-grid">
         <div className="cd-set-field">
           <label>업체명</label>
-          <input defaultValue={s.brand ?? ""} />
+          <input value={brand} onChange={(e) => setBrand(e.target.value)} />
         </div>
         <div className="cd-set-field">
           <label>지역</label>
-          <input defaultValue={campaign.region} />
+          <input value={region} onChange={(e) => setRegion(e.target.value)} />
         </div>
         <div className="cd-set-field">
           <label>업종</label>
-          <input defaultValue={campaign.industry} />
+          <input value={industry} onChange={(e) => setIndustry(e.target.value)} />
         </div>
         <div className="cd-set-field">
           <label>CTA</label>
-          <input defaultValue={s.cta ?? ""} />
+          <input value={cta} onChange={(e) => setCta(e.target.value)} />
         </div>
         <div className="cd-set-field wide">
           <label>톤 / 스타일</label>
-          <input defaultValue={s.tone ?? ""} />
+          <input value={tone} onChange={(e) => setTone(e.target.value)} />
         </div>
         <div className="cd-set-field wide">
           <label>독자 / 타겟</label>
-          <input defaultValue={s.audience ?? ""} />
+          <input value={audience} onChange={(e) => setAudience(e.target.value)} />
         </div>
         <div className="cd-set-field wide-2">
           <label>키워드</label>
           <div className="cd-set-kws">
-            {(s.keywords ?? []).map((k) => (
+            {kws.map((k) => (
               <span key={k} className="kw-chip">
-                {k} <button className="kw-chip-x">×</button>
+                {k}{" "}
+                <button
+                  className="kw-chip-x"
+                  onClick={() => setKws(kws.filter((x) => x !== k))}
+                >
+                  ×
+                </button>
               </span>
             ))}
-            <button className="kw-chip add">＋ 추가</button>
+            <input
+              value={kwDraft}
+              onChange={(e) => setKwDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addKw();
+                }
+              }}
+              placeholder="새 키워드 + Enter"
+              style={{
+                background: "transparent",
+                border: "1px solid var(--border-1)",
+                borderRadius: 4,
+                padding: "2px 6px",
+                fontSize: 11,
+                color: "var(--text)",
+                width: 140,
+              }}
+            />
           </div>
         </div>
       </div>
@@ -470,9 +541,15 @@ function CampaignSettingsEditor({
         </span>
         <button
           className="btn-primary xs"
-          onClick={() => toast.success("저장 (mock)")}
+          onClick={onSave}
+          disabled={update.isPending}
         >
-          <I.Check size={11} /> 저장
+          {update.isPending ? (
+            <I.Loader size={11} className="animate-spin" />
+          ) : (
+            <I.Check size={11} />
+          )}{" "}
+          저장
         </button>
       </div>
     </div>

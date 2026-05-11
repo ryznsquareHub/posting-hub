@@ -8,6 +8,7 @@ import { useIntakeFeed, useHookEndpoints } from "@/features/intake/useIntake";
 import { useImports } from "@/features/intake/useImports";
 import { useAutomation } from "@/features/intake/useAutomation";
 import { useManualPaste } from "@/features/intake/useManualPaste";
+import { useCreateHook } from "@/features/intake/useCreateHook";
 import { usePrompts } from "@/features/prompts/usePrompts";
 import { LiveDot, PlatTag, kindMeta, timeAgo } from "@/lib/format/meta";
 import {
@@ -34,6 +35,7 @@ export default function IntakePage() {
   const { data: prompts = [] } = usePrompts();
   const { data: imports = [] } = useImports();
   const manualPaste = useManualPaste();
+  const newHook = useCreateHook();
 
   const onPaste: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     const v = e.target.value;
@@ -389,7 +391,38 @@ export default function IntakePage() {
 
       {/* HOOK endpoints */}
       {tab === "hooks" && (
-        <div className="hooks-grid">
+        <>
+          <div
+            className="intake-feed-h"
+            style={{
+              padding: "8px 0",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span className="mute">
+              새 Hook 발급 → Claude Scheduled Tasks 등에 등록할 URL 받기
+            </span>
+            <button
+              className="btn-primary"
+              onClick={async () => {
+                const name = window.prompt("Hook 이름 (예: 일일 SEO 배치)");
+                if (!name?.trim()) return;
+                try {
+                  const h = await newHook.mutateAsync({ name: name.trim() });
+                  navigator.clipboard?.writeText(h.url).catch(() => undefined);
+                  toast.success(`Hook 발급됨 — URL 복사`);
+                } catch (e) {
+                  toast.error((e as Error).message);
+                }
+              }}
+              disabled={newHook.isPending}
+            >
+              <I.Plus size={11} /> 새 Hook
+            </button>
+          </div>
+          <div className="hooks-grid">
           {hooks.map((h) => (
             <div key={h.id} className={"hook-card " + h.status}>
               <div className="hook-card-h">
@@ -461,7 +494,8 @@ export default function IntakePage() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        </>
       )}
 
       {/* BATCH history */}

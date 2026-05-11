@@ -6,6 +6,7 @@ import { I } from "@/components/icons";
 import { usePrompts } from "@/features/prompts/usePrompts";
 import { useHookEndpoints, useIntakeFeed } from "@/features/intake/useIntake";
 import { useAutomation } from "@/features/intake/useAutomation";
+import { NewPromptModal } from "@/features/prompts/NewPromptModal";
 import { LiveDot, PlatTag, timeAgo } from "@/lib/format/meta";
 import type { Prompt } from "@/types/prompt";
 
@@ -16,6 +17,7 @@ export default function WorkflowPage() {
   const auto = useAutomation();
   const nav = useNavigate();
   const [pick, setPick] = useState<string | null>(null);
+  const [newOpen, setNewOpen] = useState(false);
   const effectivePick = pick ?? list[0]?.id ?? null;
   const cur = list.find((p) => p.id === effectivePick) ?? null;
 
@@ -44,7 +46,11 @@ export default function WorkflowPage() {
             <h2>AI Workflows</h2>
             <div className="wf-side-sub">Claude → Hook → PostingHub</div>
           </div>
-          <button className="btn-icon" title="새 워크플로우">
+          <button
+            className="btn-icon"
+            title="새 워크플로우"
+            onClick={() => setNewOpen(true)}
+          >
             <I.Plus size={12} />
           </button>
         </div>
@@ -374,6 +380,11 @@ export default function WorkflowPage() {
           <div className="t-empty">워크플로우를 선택하세요</div>
         )}
       </div>
+      <NewPromptModal
+        open={newOpen}
+        onClose={() => setNewOpen(false)}
+        onCreated={(id) => setPick(id)}
+      />
     </div>
   );
 }
