@@ -109,10 +109,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
 
-  // Auth
+  // Auth — Bearer header (Claude Desktop) 또는 URL query token (claude.ai web Custom Connector)
   const auth = String(req.headers["authorization"] ?? "");
   const bearer = /^Bearer\s+(.+)$/i.exec(auth)?.[1];
-  if (!SECRET || bearer !== SECRET) {
+  const q = req.query ?? {};
+  const queryToken = String(
+    (q as Record<string, unknown>).t ??
+      (q as Record<string, unknown>).token ??
+      (q as Record<string, unknown>).key ??
+      "",
+  );
+  const provided = bearer || queryToken;
+  if (!SECRET || provided !== SECRET) {
     return res.status(401).json({ error: "unauthorized" });
   }
 
