@@ -1,0 +1,9 @@
+/*
+ * Globals: 디자인 패키지의 styles.css 를 그대로 도입 (design.css).
+ * Tailwind 는 base 만 안 깔고 utilities 만 keep — 디자인 클래스와 충돌 회피.
+ * tokens.css 는 design.css 의 :root 와 동일한 값으로 두며 중복 정의 회피하지 않는다 (override 안전).
+ */
+
+@import "./design.css";
+
+@tailwind utilities;

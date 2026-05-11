@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install*)",
+      "Bash(npm i*)",
+      "Bash(npm run *)",
+      "Bash(npx tsc*)",
+      "Bash(npx vite*)",
+      "Bash(npx supabase*)",
+      "Bash(npx eslint*)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(doppler*)",
+      "PowerShell(npm*)",
+      "PowerShell(npx*)",
+      "PowerShell(git status*)",
+      "PowerShell(git diff*)",
+      "PowerShell(git log*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/role-handoff.js",
+            "shell": "bash"
+          }
+        ]
+      }
+    ]
+  }
+}

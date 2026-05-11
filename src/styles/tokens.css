@@ -1,0 +1,39 @@
+/* PostingHub — Linear/Vercel dark operator UI tokens (D-003) */
+:root {
+  --bg:        #08090a;
+  --bg-1:      #0c0d0f;
+  --bg-2:      #111214;
+  --bg-3:      #16181b;
+  --bg-hover:  #1a1c1f;
+  --bg-select: #1d2128;
+
+  --border-0:  rgba(255, 255, 255, 0.05);
+  --border-1:  rgba(255, 255, 255, 0.08);
+  --border-2:  rgba(255, 255, 255, 0.13);
+  --border-3:  rgba(255, 255, 255, 0.20);
+
+  --text-hi:   #ededed;
+  --text:      #c8c8c8;
+  --text-mid:  #8a8d93;
+  --text-lo:   #6a6d72;
+  --text-dim:  #50545a;
+
+  --accent:        #6e7af0;
+  --accent-soft:   rgba(110, 122, 240, 0.13);
+
+  --ok:        #3acc81;
+  --warn:      #f5a524;
+  --info:      #5e80f5;
+  --danger:    #e2654a;
+
+  --status-draft:     #6b6b6b;
+  --status-ready:     #f5a524;
+  --status-scheduled: #5e80f5;
+  --status-published: #3acc81;
+  --status-archived:  #4a4a4a;
+
+  --row-h-compact: 36px;
+  --row-h-comfy:   52px;
+
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}

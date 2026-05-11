@@ -1,0 +1,58 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build outputs
+dist/
+dist-ssr/
+build/
+.vite/
+
+# env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Claude hook state (per-machine)
+.claude/hooks/.handoff-state.json
+.claude/hooks/.debug.log
+
+# design package (extracted)
+.design-package/
+.design-package-v2/
+
+# Vercel
+.vercel/
+
+# downloaded CLI binaries
+.local/
+
+# tsbuild
+tsconfig.tsbuildinfo
+
+# tmp
+tmp/
+*.tmp
