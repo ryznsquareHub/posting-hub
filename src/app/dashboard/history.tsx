@@ -542,7 +542,7 @@ export default function HistoryPage() {
                       onJump={(kind, id) => {
                         if (kind === "post") nav("/dashboard/posts");
                         else if (kind === "campaign")
-                          nav(`/dashboard/campaigns/${id}`);
+                          nav(`/dashboard/campaign/${id}`);
                       }}
                     />
                   ))}
@@ -561,7 +561,7 @@ export default function HistoryPage() {
               onJump={(kind, id) => {
                 if (kind === "post") nav("/dashboard/posts");
                 else if (kind === "campaign")
-                  nav(`/dashboard/campaigns/${id}`);
+                  nav(`/dashboard/campaign/${id}`);
               }}
               doCopy={doCopy}
               copyText={copyText}

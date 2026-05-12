@@ -172,7 +172,7 @@ export function Sidebar({
           <button
             className="side-section-add"
             title="새 캠페인 (Cmd+Shift+N)"
-            onClick={() => setNewCampaignOpen(true)}
+            onClick={() => nav("/dashboard/campaign/new")}
           >
             ＋
           </button>

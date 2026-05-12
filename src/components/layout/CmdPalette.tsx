@@ -46,6 +46,7 @@ export function CmdPalette({ open, onClose, campaigns }: CmdPaletteProps) {
     { label: "Go to Templates",   hint: "G T", run: () => { nav("/dashboard/templates"); onClose(); } },
     { label: "Go to History",     hint: "—",   run: () => { nav("/dashboard/history"); onClose(); } },
     { label: "Go to Settings",    hint: "—",   run: () => { nav("/dashboard/settings"); onClose(); } },
+    { label: "New campaign",      hint: "N C", run: () => { nav("/dashboard/campaign/new"); onClose(); } },
   ];
 
   const campaignItems: CmdItem[] = campaigns.map((c) => ({

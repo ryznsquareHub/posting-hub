@@ -4,6 +4,7 @@ import DashboardLayout from "./app/dashboard/layout";
 import TodayPage from "./app/dashboard/today";
 import PostsPage from "./app/dashboard/posts";
 import CampaignDetailPage from "./app/dashboard/campaign-detail";
+import CampaignCreatePage from "./app/dashboard/campaign-create";
 import TemplatesPage from "./app/dashboard/templates";
 import PromptLibraryPage from "./app/dashboard/prompt-library";
 import IntakePage from "./app/dashboard/intake";
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <TodayPage /> },
       { path: "posts", element: <PostsPage /> },
+      { path: "campaign/new", element: <CampaignCreatePage /> },
       { path: "campaign/:id", element: <CampaignDetailPage /> },
       { path: "templates", element: <TemplatesPage /> },
       { path: "prompt-library", element: <PromptLibraryPage /> },
