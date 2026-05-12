@@ -1,7 +1,91 @@
+import { Fragment } from "react";
+
 import { I } from "@/components/icons";
 import { STATUSES, KINDS } from "@/data/seed";
 import type { Campaign } from "@/types/campaign";
 import type { Post, PostStatus } from "@/types/post";
+
+/**
+ * 본문 안의 이미지 자리 패턴.
+ *   [사진1 — img: https://picsum.photos/seed/hair-salon/800/450]
+ *   [사진2 - img: https://picsum.photos/seed/cafe/800/450]
+ */
+const IMG_LINE_RE = /^\s*\[사진\d+\s*[—\-]\s*img:\s*(https?:\/\/[^\]\s]+)\s*\]\s*$/;
+const PICSUM_SEED_RE = /picsum\.photos\/seed\/([^/]+)\//;
+
+function renderBody(body: string): React.ReactNode {
+  const lines = body.split("\n");
+  const out: React.ReactNode[] = [];
+  let buf: string[] = [];
+
+  const flush = () => {
+    if (buf.length) {
+      out.push(
+        <pre key={"t" + out.length} className="preview-body-text">
+          {buf.join("\n")}
+        </pre>,
+      );
+      buf = [];
+    }
+  };
+
+  for (const line of lines) {
+    const m = IMG_LINE_RE.exec(line);
+    if (!m) {
+      buf.push(line);
+      continue;
+    }
+    flush();
+    const url = m[1];
+    const seedMatch = PICSUM_SEED_RE.exec(url);
+    const keyword = seedMatch?.[1] ?? "";
+    const unsplashUrl = keyword ? `https://unsplash.com/s/photos/${keyword}` : "";
+
+    out.push(
+      <div key={"i" + out.length} className="preview-img-wrap">
+        <img src={url} alt={keyword || ""} className="preview-img" loading="lazy" />
+        <div className="preview-img-actions">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="preview-img-btn"
+            title="원본 열기 (새 탭)"
+          >
+            <I.External size={11} />
+          </a>
+          <a
+            href={url}
+            download={`${keyword || "photo"}.jpg`}
+            className="preview-img-btn"
+            title="이미지 다운로드"
+          >
+            <I.Download size={11} />
+          </a>
+          {unsplashUrl && (
+            <a
+              href={unsplashUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="preview-img-btn"
+              title={`unsplash 에서 '${keyword}' 다른 사진 검색`}
+            >
+              <I.Search size={11} />
+            </a>
+          )}
+        </div>
+        {keyword && (
+          <div className="preview-img-caption">
+            <I.Image size={10} /> {keyword}
+          </div>
+        )}
+      </div>,
+    );
+  }
+  flush();
+
+  return <Fragment>{out}</Fragment>;
+}
 
 interface PreviewPanelProps {
   post: Post | null;
@@ -212,7 +296,7 @@ export function PreviewPanel({
           <span>본문</span>
           <span className="body-count">{post.body.length}자</span>
         </div>
-        <pre className="preview-body">{post.body}</pre>
+        <div className="preview-body">{renderBody(post.body)}</div>
       </div>
 
       {post.memo && (

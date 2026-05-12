@@ -44,6 +44,8 @@ import {
   Power,
   ExternalLink,
   Link2,
+  Download,
+  Image as ImageIcon,
   type LucideIcon,
   type LucideProps,
 } from "lucide-react";
@@ -92,6 +94,8 @@ export const I = {
   Power,
   External: ExternalLink,
   Link: Link2,
+  Download,
+  Image: ImageIcon,
 } as const satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof I;

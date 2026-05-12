@@ -139,7 +139,7 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 **포맷팅**:
 - 헤딩(##) / 표 / bullet 최소
 - 짧은 줄글 위주
-- 사진 자리: `[사진1 — unsplash: https://unsplash.com/s/photos/<영문-검색어>]` 형식. 1~2개 (많이 넣으면 광고 티)
+- 사진 자리: `[사진1 — img: https://picsum.photos/seed/<영문-키워드>/800/450]` 형식. 1~2개 (많이 넣으면 광고 티)
 - URL은 본문에 딱 1번 (`perfoads.co.kr`)
 - 협찬/광고 표기 문구 ❌ 사용 안 함
 
@@ -148,7 +148,7 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 **길이**: 1,500~2,500자
 **제목**: 검색 키워드 자연 삽입, 광고성 단어 금지
 **구조**: 6~8단락, 본인 경험담 중심
-- 가게 사진 4~6장 자리 (`[사진1 — unsplash: https://unsplash.com/s/photos/<영문-검색어>]` 형식)
+- 가게 사진 4~6장 자리 (`[사진1 — img: https://picsum.photos/seed/<영문-키워드>/800/450]` 형식)
 - H2 1~2개까지만 허용
 - 본문 중간에 자연스러운 키워드 반복 (3~5회)
 - 협찬/광고 표기 문구 ❌ 사용 안 함
@@ -181,7 +181,7 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 본문:
 ...
 
-[사진1 — unsplash: https://unsplash.com/s/photos/<영문-검색어>]
+[사진1 — img: https://picsum.photos/seed/<영문-키워드>/800/450]
 
 ... 본문 마무리 단락 (마지막 질문) ...
 
@@ -202,10 +202,11 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 - 광고성 어휘 금지: `#무조건추천` `#대박` `#강추` 절대 X
 - `#광고` `#협찬` `#sponsored` ❌ 금지 (협찬 표기 안 함 방침)
 
-## 사진 unsplash 검색어 작성 규칙
+## 사진 seed 키워드 작성 규칙
 - 영문, 단어 사이 하이픈
-- 컨텍스트 매칭: 미용실 → `hair-salon-interior`, 카페 → `cafe-storefront`, 네일 → `nail-art-shop`, 사장 페르소나 → `small-business-owner`
-- 본문에 박힌 URL 클릭 → unsplash 결과 페이지 이동 → 사장님이 매장 톤에 맞는 사진 직접 선택 후 다운로드
+- 컨텍스트 매칭: 미용실 → `hair-salon-interior`, 카페 → `cafe-storefront`, 네일 → `nail-art`, 사장 페르소나 → `small-business-owner`
+- PostingHub PreviewPanel 이 본문에 박힌 picsum URL 을 자동으로 이미지 렌더링 → 다운로드 / 새 탭 / unsplash 검색 버튼 노출
+- 네이버 블로그·카페 발행 시는 다운로드 → 에디터에서 직접 업로드 (외부 이미지 URL 직접 못 받음)
 
 ## URL / 이메일 표기 규칙 (중요)
 - **markdown 링크 `[text](url)` 사용 금지** — 운영툴·일부 에디터에서 그대로 텍스트로 노출되어 지저분해짐
