@@ -26,6 +26,65 @@ import {
   type QuickFilter,
 } from "./posts-shell";
 
+// ── HTML rich copy helpers ───────────────────────────────────────────────
+// 본문 안의 [사진N — img: URL] 라인을 <p><img src="URL"></p> 로 치환해
+// 네이버/노션/워드 같은 rich-text 에디터에 paste 시 이미지가 자동 임베드되도록.
+const COPY_IMG_LINE_RE = /^\s*\[사진\d+\s*[—\-]\s*img:\s*(https?:\/\/[^\]\s]+)\s*\]\s*$/;
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function bodyToRichHtml(body: string): string {
+  const lines = body.split("\n");
+  const html: string[] = [];
+  let para: string[] = [];
+  const flushPara = () => {
+    if (!para.length) return;
+    const joined = para.join("<br>").trim();
+    if (joined) html.push(`<p>${joined}</p>`);
+    para = [];
+  };
+  for (const line of lines) {
+    const m = COPY_IMG_LINE_RE.exec(line);
+    if (m) {
+      flushPara();
+      html.push(`<p><img src="${m[1]}" alt=""/></p>`);
+    } else if (line.trim() === "") {
+      flushPara();
+    } else {
+      para.push(escapeHtml(line));
+    }
+  }
+  flushPara();
+  return html.join("\n");
+}
+
+async function copyRich(body: string): Promise<void> {
+  const html = bodyToRichHtml(body);
+  try {
+    if (typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([body], { type: "text/plain" }),
+        }),
+      ]);
+      return;
+    }
+  } catch {
+    /* fall through to plain text */
+  }
+  try {
+    await navigator.clipboard?.writeText(body);
+  } catch {
+    /* clipboard unavailable */
+  }
+}
+
 export default function DashboardLayout() {
   const location = useLocation();
   const nav = useNavigate();
@@ -115,7 +174,10 @@ export default function DashboardLayout() {
   // ── Mutators ────────────────────────────────────────────────────────────
   const doCopy = useCallback(
     (post: Post, opts?: { advance?: boolean }) => {
-      navigator.clipboard?.writeText(post.body).catch(() => undefined);
+      // HTML rich + plain text 둘 다 클립보드로 → 본문에 박힌 [사진N — img: URL] 라인이
+      // rich-text 에디터(네이버/노션/워드 등)에 paste 시 자동으로 <img> 로 임베드됨.
+      // plain text 만 받는 곳은 fallback 으로 텍스트가 그대로 들어감.
+      copyRich(post.body);
       setSessionCopies((n) => n + 1);
       setPosts((prev) =>
         prev.map((p) => {
@@ -139,8 +201,11 @@ export default function DashboardLayout() {
       if (isSupabaseConfigured) {
         copyMut.mutate(post.id);
       }
+      const imgCount = (post.body.match(/\[사진\d+\s*[—\-]\s*img:/g) || []).length;
       toast.success(
-        `본문 복사됨 · ${post.platform === "NAVER_CAFE" ? "Cafe" : "Blog"}에 붙여넣기`,
+        imgCount > 0
+          ? `본문 + 이미지 ${imgCount}장 복사됨 · ${post.platform === "NAVER_CAFE" ? "Cafe" : "Blog"}에 붙여넣기`
+          : `본문 복사됨 · ${post.platform === "NAVER_CAFE" ? "Cafe" : "Blog"}에 붙여넣기`,
       );
       if (opts?.advance && burst) {
         const idx = filtered.findIndex((p) => p.id === post.id);
