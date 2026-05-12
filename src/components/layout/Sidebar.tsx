@@ -30,6 +30,7 @@ const NAV_ROUTES = {
   library:   { path: "/dashboard/prompt-library",    label: "Workflows",  icon: I.Zap,      showBadge: false, live: false },
   import:    { path: "/dashboard/import",            label: "Intake",     icon: I.Inbox,    showBadge: false, live: true  },
   templates: { path: "/dashboard/templates",         label: "Templates",  icon: I.Layers,   showBadge: false, live: false },
+  history:   { path: "/dashboard/history",           label: "History",    icon: I.Clock,    showBadge: false, live: false },
 } as const;
 
 export function Sidebar({
