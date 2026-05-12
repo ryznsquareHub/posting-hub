@@ -118,12 +118,16 @@ function parseSingle(raw: string): ParsedPost {
   };
 }
 
-function parseBatch(raw: string): ParsedPost[] {
+interface ParsedWithRaw extends ParsedPost {
+  rawChunk: string;
+}
+
+function parseBatch(raw: string): ParsedWithRaw[] {
   const chunks = raw
     .split(/^\s*(?:-{3,}|={3,})\s*$/m)
     .map((c) => c.trim())
     .filter(Boolean);
-  return chunks.map(parseSingle);
+  return chunks.map((c) => ({ ...parseSingle(c), rawChunk: c }));
 }
 
 // ── main handler ────────────────────────────────────────────────────────
@@ -264,7 +268,7 @@ Deno.serve(async (req: Request) => {
       queued: p.parseStatus !== "error",
       latency_ms: Math.round(performance.now() - t0),
       raw_hash: rawHash,
-      raw_body: raw,
+      raw_body: p.rawChunk,
     });
 
     if (evErr) {
@@ -293,6 +297,7 @@ Deno.serve(async (req: Request) => {
         status: "ready",
         copy_count: 0,
         recyclable: false,
+        source_intake_id: eventId,
       });
       // @ts-expect-error
       if (postErr) errors.push(`post ${i}: ${postErr.message}`);
