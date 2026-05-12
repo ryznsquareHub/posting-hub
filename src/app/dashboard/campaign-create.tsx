@@ -215,7 +215,9 @@ export default function CampaignCreatePage() {
     },
   ];
   const passed = checks.filter((c) => c.ok).length;
-  const canCreate = passed === checks.length && !createMut.isPending;
+  const allOk = passed === checks.length;
+  const canCreate = allOk && !createMut.isPending;
+  const missingLabels = checks.filter((c) => !c.ok).map((c) => c.label);
 
   const platformLine =
     [
@@ -309,25 +311,45 @@ export default function CampaignCreatePage() {
           </div>
         </div>
         <div className="cc-head-r">
-          <div className="cc-progress">
+          <div className="cc-progress" title={missingLabels.length ? `미충족: ${missingLabels.join(", ")}` : "모두 충족"}>
             {checks.map((c) => (
               <div
                 key={c.id}
                 className={"cc-prog-dot " + (c.ok ? "ok" : "")}
-                title={c.label}
+                title={(c.ok ? "✓ " : "필요: ") + c.label}
               />
             ))}
             <span className="cc-prog-text mono">
               {passed}/{checks.length}
             </span>
+            {!allOk && (
+              <span className="cc-prog-missing">
+                {missingLabels[0]} 필요
+              </span>
+            )}
           </div>
           <button className="btn-ghost" onClick={() => nav(-1)}>
             취소
           </button>
           <button
-            className={"btn-primary " + (canCreate ? "" : "disabled")}
-            onClick={handleCreate}
-            disabled={!canCreate}
+            className={"btn-primary " + (allOk ? "" : "disabled")}
+            onClick={() => {
+              if (createMut.isPending) return;
+              if (!allOk) {
+                toast.error(
+                  `아직 채워지지 않은 항목: ${missingLabels.join(" · ")}`,
+                  { description: "키워드는 Enter / , / Space 로 추가해야 카운트됩니다." },
+                );
+                return;
+              }
+              handleCreate();
+            }}
+            disabled={createMut.isPending}
+            title={
+              allOk
+                ? "생성 (⌘↵)"
+                : `필수 항목 미충족: ${missingLabels.join(", ")}`
+            }
           >
             <I.Plus size={11} />
             <span>{createMut.isPending ? "생성 중…" : "생성 후 열기"}</span>

@@ -1664,7 +1664,8 @@ pre { font-family: "Geist Mono", ui-monospace, monospace; }
 }
 .cc-prog-dot.ok { background: #3acc81; border-color: #3acc81; }
 .cc-prog-text { font-size: 10.5px; color: var(--text-dim); margin-left: 4px; }
-.btn-primary.disabled { opacity: 0.4; cursor: not-allowed; }
+.cc-prog-missing { font-size: 10.5px; color: #f5a524; margin-left: 8px; white-space: nowrap; font-weight: 500; }
+.btn-primary.disabled { opacity: 0.4; cursor: pointer; }
 .btn-primary .kbd { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.9); }
 
 .cc-body {
