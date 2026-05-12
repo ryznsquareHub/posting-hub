@@ -42,7 +42,24 @@ const SUPABASE_URL =
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BUCKET = "copyblog-images";
 
-const [, , slug, ...urls] = process.argv;
+const [, , slug, ...rest] = process.argv;
+
+// --text=1,3,5 옵션 파싱 — 글자가 박힌 사진 번호 (좌우반전·회전이 깨지는 case)
+// 해당 번호의 사진은 primary 를 v1_flop (좌우반전) → v2_crop_bright (크롭+밝기, 글자 안전) 로
+let textPages = new Set();
+const urls = [];
+for (const arg of rest) {
+  if (arg.startsWith("--text=")) {
+    arg
+      .slice(7)
+      .split(",")
+      .map((s) => parseInt(s.trim(), 10))
+      .filter((n) => !Number.isNaN(n))
+      .forEach((n) => textPages.add(n));
+  } else {
+    urls.push(arg);
+  }
+}
 
 function die(msg, extra = {}) {
   console.error(JSON.stringify({ ok: false, error: msg, ...extra }));
@@ -50,7 +67,9 @@ function die(msg, extra = {}) {
 }
 
 if (!slug || urls.length === 0) {
-  die("usage: node scripts/copyblog-images.mjs <slug> <url1> [url2] ...");
+  die(
+    "usage: node scripts/copyblog-images.mjs <slug> [--text=N,M,...] <url1> [url2] ...",
+  );
 }
 if (!/^[a-z0-9-]+$/.test(slug)) {
   die("slug 는 영문 소문자/숫자/하이픈만 허용");
@@ -190,9 +209,17 @@ for (const base of sortedBases) {
     }
   }
   if (Object.keys(all).length > 0) {
+    // 글자 있는 사진은 좌우반전/회전 없는 crop variant 를 primary 로 사용
+    // (v2_crop_bright = 테두리 5% 크롭 + 밝기↑ + 채도↑ — 글자 그대로 유지)
+    const isText = textPages.has(n);
+    const primaryVariant = isText ? "v2_crop_bright" : "v1_flop";
+    const primary =
+      all[primaryVariant] || all.v1_flop || Object.values(all)[0];
     result.images.push({
       n,
-      primary: all.v1_flop || Object.values(all)[0],
+      primary,
+      primaryVariant,
+      isText,
       all,
     });
   }
@@ -202,7 +229,14 @@ result.uploadOk = uploadOk;
 result.uploadFail = uploadFail;
 result.images.sort((a, b) => a.n - b.n);
 
-console.error(`  ✓ 업로드 ${uploadOk} / 실패 ${uploadFail}\n`);
+console.error(`  ✓ 업로드 ${uploadOk} / 실패 ${uploadFail}`);
+if (textPages.size > 0) {
+  console.error(
+    `  ✓ 글자 사진 ${[...textPages].sort((a, b) => a - b).join(",")} → primary = v2_crop_bright (반전·회전 없이 크롭만)\n`,
+  );
+} else {
+  console.error("");
+}
 
 // stdout 에는 오직 JSON 1줄 (슬래시 커맨드가 파싱)
 console.log(JSON.stringify(result));
