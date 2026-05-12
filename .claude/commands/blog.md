@@ -100,9 +100,20 @@ argument-hint: [유형] [구체 주제] (예: how-to 1인 사장 광고 입문 /
 
 # CTA (자기 블로그라서 가능)
 
-마지막 단락에 한 문단. 영업 멘트 X, 정보 제공 톤. **"저희" 같은 1인칭 절대 X**:
+마지막 단락. 영업 멘트 X, 정보 제공 톤. **"저희" 같은 1인칭 절대 X**.
 
-> perfoAds 는 5만원으로 시작 가능하고 약정이 없어 부담 없이 굴려볼 수 있는 구조입니다. 자세한 단가와 명함 페이지 템플릿은 [perfoads.co.kr](https://perfoads.co.kr) 에서 확인 가능합니다. 문의는 hello@perfoads.co.kr.
+## URL / 이메일 표기 규칙 (중요)
+- **markdown 링크 `[text](url)` 사용 금지** — 운영툴·일부 에디터에서 그대로 텍스트로 노출되어 지저분해짐
+- URL 은 plain text 로: `perfoads.co.kr` (필요하면 `https://perfoads.co.kr`)
+- 이메일은 **별도 줄로 분리** — 같은 문장 안에 이메일을 박으면 자동 linkify 가 뒷 문장까지 묶음
+- 권장 형식:
+
+```
+perfoAds 는 5만원으로 시작 가능하고 약정이 없어 부담 없이 굴려볼 수 있는 구조입니다.
+자세한 단가와 명함 페이지 템플릿은 perfoads.co.kr 에서 확인 가능합니다.
+
+문의: hello@perfoads.co.kr
+```
 
 (case 글일 때는 "비슷한 매장 운영하신다면 perfoAds 의 5만원 시작 구조를 검토해보실 수 있습니다" 정도 살짝 보강 OK)
 
@@ -235,5 +246,6 @@ N / 아니 → 카피만 유지, 저장 스킵.
 - [ ] 협찬 표기 0회 (자기 블로그)
 - [ ] 영상 제작 / 외부 디자이너 같은 사실 아닌 표현 0회
 - [ ] 단가·충전금·페이지가 숫자 사실 섹션과 일치
-- [ ] URL: `perfoads.co.kr` (path 없음 / r 1개)
+- [ ] URL: `perfoads.co.kr` (path 없음 / r 1개) — plain text, **markdown 링크 `[text](url)` 0회**
+- [ ] 이메일 `hello@perfoads.co.kr` 은 별도 줄로 분리 — `문의: hello@perfoads.co.kr` 형식
 - [ ] `#CAMPAIGN: perfoads 공식 블로그` — 한 글자도 변경 없음

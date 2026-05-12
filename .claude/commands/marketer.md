@@ -207,6 +207,11 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 - 컨텍스트 매칭: 미용실 → `hair-salon-interior`, 카페 → `cafe-storefront`, 네일 → `nail-art-shop`, 사장 페르소나 → `small-business-owner`
 - 본문에 박힌 URL 클릭 → unsplash 결과 페이지 이동 → 사장님이 매장 톤에 맞는 사진 직접 선택 후 다운로드
 
+## URL / 이메일 표기 규칙 (중요)
+- **markdown 링크 `[text](url)` 사용 금지** — 운영툴·일부 에디터에서 그대로 텍스트로 노출되어 지저분해짐
+- URL 은 plain text 로: `perfoads.co.kr` (`/marketer` 본문에선 한 번만 등장)
+- 이메일은 사장 후기 톤에서 보통 본문에 넣지 않지만, 넣을 일이 있으면 **별도 줄** 로 — 같은 문장에 박으면 자동 linkify 가 뒷 문장까지 묶음
+
 ## 입력 변수 (없으면 자동 설정)
 
 - 지역: 예) 다산 / 미사 / 강동
