@@ -361,13 +361,15 @@ pre { font-family: "Geist Mono", ui-monospace, monospace; }
 }
 .row.compact .row-thumb { width: 20px; height: 20px; }
 .row-thumb-badge {
-  position: absolute; top: 3px; right: 3px;
-  min-width: 15px; height: 13px;
+  position: absolute; top: 0; right: 0;
+  min-width: 14px; height: 12px;
   padding: 0 4px;
   background: rgba(0, 0, 0, 0.72);
   color: rgba(255, 255, 255, 0.96);
   font-size: 9px; font-weight: 600;
-  border-radius: 3px; border: 0;
+  border: 0;
+  /* 썸네일 우상단 corner (4px) 따라가고 좌하단만 살짝 라운드 */
+  border-radius: 0 4px 0 4px;
   display: inline-flex; align-items: center; justify-content: center;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -377,9 +379,8 @@ pre { font-family: "Geist Mono", ui-monospace, monospace; }
   -webkit-backdrop-filter: blur(3px);
 }
 .row.compact .row-thumb-badge {
-  min-width: 12px; height: 11px;
+  min-width: 12px; height: 10px;
   font-size: 8px; padding: 0 3px;
-  top: 2px; right: 2px;
 }
 .row-imgs {
   display: inline-flex; align-items: center; gap: 3px;
