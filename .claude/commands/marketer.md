@@ -14,8 +14,23 @@ argument-hint: [플랫폼] [지역] [업종] (예: cafe 다산 네일샵)
 
 플랫폼 / 지역 / 업종: $ARGUMENTS
 
-플랫폼이 없으면 사용자에게 cafe / blog / insta 중 하나 물어볼 것.
+플랫폼이 없으면 사용자에게 cafe / blog / insta 중 하나 물어볼 것 — **자유 텍스트 X, `AskUserQuestion` tool 로 1~4번 / 방향키로 고르게**.
 지역·업종·페르소나·기간·시뮬 수치가 없으면 합리적으로 자동 설정 (사용자에게 따로 묻지 않음).
+
+```js
+AskUserQuestion({
+  questions: [{
+    question: "어느 플랫폼으로 갈까요?",
+    header: "플랫폼",
+    multiSelect: false,
+    options: [
+      { label: "cafe", description: "네이버 카페 — 800~1,200자, 입말 후기" },
+      { label: "blog", description: "네이버 블로그 — 1,500~2,500자, SEO" },
+      { label: "insta", description: "인스타 캡션 — 200~400자, 해시태그 8~12개 (자동 저장 X)" },
+    ],
+  }],
+})
+```
 
 ---
 

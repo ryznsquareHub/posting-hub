@@ -100,12 +100,52 @@ const normalized = rawUrls.map(u => {
 - 사진 자리: 본문 안에 `[사진1]` `[사진2]` ... 자리만 텍스트로 표시 — 실제 URL은 5단계에서 치환
 - 사진 자리 개수 = 추출된 이미지 URL 개수 (단, 최대 8개로 cap)
 
-## 4) 캠페인명 확인
+## 4) 캠페인명 + 각도 확인 (AskUserQuestion 으로)
 
-`[캠페인명]` 인자가 비어 있으면 한 줄로:
-> "PostingHub 어느 캠페인으로 보낼까요? (예: '동네 와인샵 복제', 'perfoads 사장 모집' 등 — DB에 이미 존재하는 캠페인명)"
+`[캠페인명]` 또는 `[각도힌트]` 가 비어 있으면 **반드시 `AskUserQuestion` tool 로 선택지 형태로 묻는다** — 자유 텍스트 대신 1~4번 숫자 / 방향키로 고르게.
 
-답을 받기 전엔 다음 단계로 가지 않는다.
+### 형식
+```js
+AskUserQuestion({
+  questions: [
+    {
+      question: "어느 캠페인으로 보낼까요?",
+      header: "캠페인",
+      multiSelect: false,
+      options: [
+        { label: "perfoads 사장 모집", description: "사장 후기·체험기 결" },
+        { label: "perfoads 공식 블로그", description: "회사 공식 가이드·사례" },
+        { label: "perfoads", description: "일반 카탈로그" },
+      ],
+    },
+    {
+      question: "어떤 각도로 재작성할까요?",
+      header: "각도",
+      multiSelect: false,
+      options: [
+        { label: "<원본 분석 후 추정한 1순위 각도>", description: "<왜 이 각도가 적절한지 한 줄>" },
+        { label: "<2순위 각도>", description: "<이유>" },
+        { label: "<3순위 각도>", description: "<이유>" },
+      ],
+    },
+  ],
+})
+```
+
+- **header**: 12자 이내 short label (예: "캠페인", "각도")
+- **options**: 2~4개 — 원본 분석 결과로 가장 자연스러운 후보를 골라 제시. "Other" 는 자동 추가됨 (사용자가 자유 입력 원할 때)
+- **추천 옵션은 첫 번째에 두고** `(Recommended)` 표시 또는 description 에 명시
+- 인자로 둘 다 받은 경우는 묻지 말고 바로 진행
+- 한 쪽만 받은 경우는 빠진 것만 묻기 (questions 배열에 1개)
+- 답을 받기 전엔 다음 단계로 가지 않는다.
+
+### DB 캠페인 후보 가져오기
+options 의 label 은 PostingHub DB 의 실제 캠페인명과 정확히 일치해야 함. 현재 DB 의 캠페인 3개:
+- `perfoads 사장 모집` — 사장 후기·체험기 (marketer/commenter/copyblog 마사지·미용·동네 매장)
+- `perfoads 공식 블로그` — 회사 인하우스 가이드
+- `perfoads` — 일반 카탈로그
+
+이 외 캠페인이 DB 에 있으면 추가로 포함. 신규 캠페인 생성은 사용자가 "Other" 로 직접 입력.
 
 ## 5) 이미지 파이프라인 실행 (Bash → copyblog-images.mjs)
 

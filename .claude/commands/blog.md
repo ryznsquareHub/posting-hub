@@ -20,7 +20,25 @@ argument-hint: [유형] [구체 주제] (예: how-to 1인 사장 광고 입문 /
 
 - **유형** (선택): `how-to` / `case` / `update` / `trend` / `faq` / `insight` (default: how-to)
 - **구체 주제** (선택 자유 텍스트). 비우면 Claude 가 추천.
-- 인자 전부 비면 사용자에게 한 줄 질문: "어떤 유형으로 갈까요? (how-to / case / update / trend / faq / insight)"
+- 인자 전부 비면 **`AskUserQuestion` tool 로** 1~4번 / 방향키로 고르게:
+
+```js
+AskUserQuestion({
+  questions: [{
+    question: "어떤 유형으로 갈까요?",
+    header: "유형",
+    multiSelect: false,
+    options: [
+      { label: "how-to (Recommended)", description: "사장이 직접 해보는 가이드" },
+      { label: "case", description: "실제 매장 사례 분석 (가명)" },
+      { label: "trend", description: "시장·채널 트렌드 분석" },
+      { label: "insight", description: "사장 입장 인사이트·노하우" },
+    ],
+  }],
+})
+```
+
+(update / faq 는 "Other" 자유 입력으로 처리 — 사용 빈도 낮음)
 
 ## 유형 정의
 
