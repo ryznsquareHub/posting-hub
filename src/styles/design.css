@@ -340,6 +340,20 @@ pre { font-family: "Geist Mono", ui-monospace, monospace; }
 .row-title-text {
   color: var(--text-hi); font-size: 12.5px; font-weight: 450;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.row-title-text > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+.row-thumb {
+  width: 28px; height: 28px; flex: 0 0 auto;
+  object-fit: cover; border-radius: 4px;
+  background: var(--bg-2); border: 1px solid var(--border-0);
+}
+.row.compact .row-thumb { width: 20px; height: 20px; }
+.row-imgs {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px; border-radius: 100px;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: 10px; font-weight: 500; white-space: nowrap;
 }
 .row.comfy .row-title-text { white-space: normal; line-height: 1.35; }
 .row-meta {

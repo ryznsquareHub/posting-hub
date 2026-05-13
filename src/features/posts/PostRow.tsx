@@ -60,6 +60,8 @@ export function PostRow({
   const m = statusMeta(post.status);
   const km = kindMeta(post.kind);
   const del = useDeletePost();
+  const imgCount = (post.body.match(/\[사진\d+\s*[—\-]\s*img:/g) ?? []).length;
+  const firstImgUrl = post.body.match(/\[사진\d+\s*[—\-]\s*img:\s*(https?:\/\/[^\]\s]+)/)?.[1];
 
   const onDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -105,11 +107,26 @@ export function PostRow({
       </div>
 
       <div className="row-title">
-        <div className="row-title-text">{post.title}</div>
+        <div className="row-title-text">
+          {firstImgUrl && (
+            <img
+              src={firstImgUrl}
+              alt=""
+              className="row-thumb"
+              loading="lazy"
+            />
+          )}
+          <span>{post.title}</span>
+        </div>
         <div className="row-meta">
           <PlatTag platform={post.platform} />
           <span className="meta-sep">·</span>
           <span className="meta-mute">{post.industry}</span>
+          {imgCount > 0 && (
+            <span className="row-imgs" title={`이미지 ${imgCount}장 포함`}>
+              <I.Image size={10} /> {imgCount}
+            </span>
+          )}
           {post.keywords.slice(0, 2).map((k) => (
             <span key={k} className="kw">
               #{k}
