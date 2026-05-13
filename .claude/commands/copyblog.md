@@ -70,28 +70,30 @@ mcp__claude_ai_Tavily__tavily_extract({
   - **이미지 URL 리스트** — 본문 마크다운의 `![..](https://...mblogthumb-phinf.../...)` 또는 일반 `<img>` URL. 프로필 아이콘 / 광고 트래커 / 1×1 픽셀 / 지도 정적이미지(`simg.pstatic.net/static.map`) 등 **본문 사진이 아닌 것은 제외**
   - **사실 정보**: 매장명, 주소, 영업시간, 가격, 혜택, 카테고리
 
-### 네이버 mblogthumb-phinf URL 처리 (중요)
+### 네이버 CDN 도메인별 `?type=` 처리 (중요)
 
-네이버 CDN 은 `?type=` 쿼리 파라미터 없으면 **404** 떨어짐. 추출된 URL 의 `?type` 값이 무엇이든 (`w400`, `w80_blur`, 또는 없음) **`?type=w800` 으로 통일해서** copyblog-images.mjs 에 넘긴다:
+네이버 CDN 은 `?type=` 쿼리 파라미터 없으면 **404**. 그러나 **도메인마다 받는 type 값이 다름**.
+
+| 도메인 | 권장 type | 비고 |
+|---|---|---|
+| `mblogthumb-phinf.pstatic.net` | **`?type=w800`** | 800px wide. w400 / w80_blur 도 가능하지만 화질 절충 |
+| `blogfiles.pstatic.net` | **`?type=w1`** (원본 그대로) | **w800 안 받음 → 404**. 원본 마크다운의 `?type=w1` 그대로 사용 |
+| `postfiles.pstatic.net` | `?type=w1` 또는 원본 그대로 | blogfiles 와 동일 정책 |
 
 ```js
-// 본문 마크다운에서 추출한 URL 리스트를 정규화
 const normalized = rawUrls.map(u => {
   const url = new URL(u);
-  if (url.hostname.includes("mblogthumb-phinf.pstatic.net") ||
-      url.hostname.includes("blogfiles.pstatic.net") ||
-      url.hostname.includes("postfiles.pstatic.net")) {
-    url.search = "?type=w800";   // 800px wide — 원본 화질 + sharp 변형에 충분
+  if (url.hostname.includes("mblogthumb-phinf.pstatic.net")) {
+    url.search = "?type=w800";   // 800px wide
   }
+  // blogfiles / postfiles 는 원본 query (?type=w1 등) 그대로 두기
+  // — 손대면 404 떨어짐
   return url.toString();
 });
 ```
 
-- `?type=w800` = 800px 가로 폭, 원본에 가까운 화질
-- `?type=w80_blur` (썸네일 블러) 그대로 두면 변형해도 흐림이 남아 결과물 품질 X
-- `?type` 통째 제거 또는 다른 파라미터는 404 위험
-
-다른 도메인 (티스토리·구글 사진 등) 은 query 손대지 말고 그대로 사용.
+- `?type=w80_blur` (썸네일 블러) 그대로 두면 변형해도 흐림이 남아 결과물 품질 X — mblogthumb 에 한해 w800 으로 교체
+- 다른 도메인 (티스토리·구글 사진 등) 은 query 손대지 말고 그대로 사용
 
 ## 3) 본문 재작성 (Claude 가 직접)
 
