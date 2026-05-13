@@ -109,12 +109,20 @@ export function PostRow({
       <div className="row-title">
         <div className="row-title-text">
           {firstImgUrl && (
-            <img
-              src={firstImgUrl}
-              alt=""
-              className="row-thumb"
-              loading="lazy"
-            />
+            <div
+              className="row-thumb-wrap"
+              title={`이미지 ${imgCount}장 포함`}
+            >
+              <img
+                src={firstImgUrl}
+                alt=""
+                className="row-thumb"
+                loading="lazy"
+              />
+              {imgCount > 1 && (
+                <span className="row-thumb-badge">{imgCount}</span>
+              )}
+            </div>
           )}
           <span>{post.title}</span>
         </div>
